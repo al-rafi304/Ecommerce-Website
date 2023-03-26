@@ -1,22 +1,14 @@
 from django.db import models
+from member.models import Member
+
 
 # Defining database schema
-
-class User(models.Model):
-    name = models.CharField(max_length = 255)
-    email = models.EmailField(unique = True)
-    phone = models.CharField(max_length = 50)
-    dob = models.DateField()
-    is_seller = models.BooleanField(default = False)
-
-    def __str__(self) -> str:
-        return self.name
 
 class Shop(models.Model):
     title = models.CharField(max_length = 255)
     description = models.TextField()
 
-    owner = models.OneToOneField(User, on_delete = models.CASCADE)
+    owner = models.OneToOneField(Member, on_delete = models.CASCADE)
 
     def __str__(self) -> str:
         return self.title
@@ -35,14 +27,14 @@ class Cart(models.Model):
     created_at = models.DateTimeField(auto_now_add = True)      # Automatically sets current time when created
     modified_at = models.DateTimeField(auto_now = True)     # Automatically sets current time when updated/modified
 
-    user = models.ForeignKey(User, on_delete = models.CASCADE)
+    member = models.OneToOneField(Member, on_delete = models.CASCADE)
 
     # @property
     # def total_price(self):
     #     pass
 
     def __str__(self) -> str:
-        return 'Cart of: ' + self.user.name
+        return 'Cart of: ' + self.member.username
 
 class Cart_item(models.Model):
     quantity = models.IntegerField(max_length = 3)
@@ -51,7 +43,7 @@ class Cart_item(models.Model):
     product = models.ForeignKey(Product, on_delete = models.CASCADE)
 
     def __str__(self) -> str:
-        return f'Item: {self.product.title} for {self.cart.user.name}'
+        return f'Item: {self.product.title} for {self.cart.member.username}'
 
 class Order(models.Model):
     PENDING = 'PD'
@@ -68,7 +60,7 @@ class Order(models.Model):
     order_status = models.CharField(max_length = 2, choices = STATUS_CHOICES, default = PENDING)
     created_at = models.DateTimeField(auto_now_add = True)
 
-    user = models.ForeignKey(User, null = True, on_delete = models.SET_NULL)
+    member = models.ForeignKey(Member, null = True, on_delete = models.SET_NULL)
     shop = models.ForeignKey(Shop, null = True, on_delete = models.SET_NULL)
 
     # @property
@@ -76,7 +68,10 @@ class Order(models.Model):
     #     pass
 
     def __str__(self) -> str:
-        return f'By: {self.user.name} from: {self.shop.title}'
+        if self.shop != None:
+            return f'By: {self.member.username} from: {self.shop.title} ID: {self.pk}'
+        else:
+            return f'By: {self.member.username} from: REMOVED'
 
 class Order_item(models.Model):
     quantity = models.IntegerField(max_length = 3)
@@ -85,4 +80,7 @@ class Order_item(models.Model):
     product = models.ForeignKey(Product, null = True, on_delete = models.SET_NULL)
 
     def __str__(self) -> str:
-        return f'Item: {self.product.title} for {self.order.user.name}'
+        if self.product != None:
+            return f'Item: {self.product.title} for {self.order.member.username}'
+        else:
+            return f'Item: REMOVED for {self.order.member.username}'
