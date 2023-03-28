@@ -4,7 +4,7 @@
 {% block content %}
 
 <br>
-<div class='container position-absolute top-50 start-50 translate-middle bg-light text-dark rounded shadow-sm p-3 mb-5 bg-body-tertiary rounded' style="width: 300px;">
+<div class='container position-absolute top-50 start-50 translate-middle bg-light text-dark rounded shadow p-3 mb-5 bg-body-tertiary rounded' style="width: 300px;">
     <h1>Sign in</h1>
     <br>
         <form method="POST">
@@ -21,6 +21,6 @@
             <button type="submit" class="btn btn-primary btn-lg rounded-pill w-100">Submit</button>
         </form>
         <br>
-        Don't have an account? <a href="#">Create Now</a>
+        Don't have an account? <a href="{% url 'register' %}">Create Now</a>
     </div>
 {% endblock content %}
