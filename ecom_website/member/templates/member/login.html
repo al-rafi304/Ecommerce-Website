@@ -4,19 +4,23 @@
 {% block content %}
 
 <br>
-<div class='container'>
-    <h1 align='center'>Login</h1>
-    <form method="POST">
-        {% csrf_token %}
-        <div class="mb-3">
-        <label for="exampleInputEmail1" class="form-label">Username</label>
-        <input type="text" class="form-control" name="username">
-        </div>
-        <div class="mb-3">
-        <label for="exampleInputPassword1" class="form-label">Password</label>
-        <input type="password" class="form-control" name="password">
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
-</div>
+<div class='container position-absolute top-50 start-50 translate-middle bg-light text-dark rounded shadow-sm p-3 mb-5 bg-body-tertiary rounded' style="width: 300px;">
+    <h1>Sign in</h1>
+    <br>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Username</label>
+            <input type="text" class="form-control" name="username">
+            </div>
+            <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">Password</label>
+            <input type="password" class="form-control" name="password">
+            </div>
+            <br>
+            <button type="submit" class="btn btn-primary btn-lg rounded-pill w-100">Submit</button>
+        </form>
+        <br>
+        Don't have an account? <a href="#">Create Now</a>
+    </div>
 {% endblock content %}
