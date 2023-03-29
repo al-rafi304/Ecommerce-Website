@@ -1,0 +1,20 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+    <div class="container my-4 ">
+        <div class="row justify-content-center ">
+            <div class="col-md-6">
+                <div class="card bg-light text-dark rounded shadow p-3 mb-5 bg-body-tertiary rounded border-0">
+                    <div class="card-body">
+                        <h1 class="card-title">Create Shop</h1>
+                        <form method="POST">
+                            {% csrf_token %}
+                            {{ form.as_p }}
+                            <button type="submit" class="btn btn-primary">Create</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
