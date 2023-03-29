@@ -19,10 +19,10 @@ def create_shop(request):
 
     # Permission handling
     if request.user.is_authenticated == False:      # Not authenticated
-        messages.success(request, 'You do not have the permission to view that page')
+        messages.error(request, 'You do not have the permission to view that page')
         return redirect('home')
     if request.user.is_seller:                      # Already owns shop
-        messages.success(request, 'You already own a shop and cannot create any more')
+        messages.error(request, 'You already own a shop and cannot create any more')
         return redirect('home')
 
     # View handling

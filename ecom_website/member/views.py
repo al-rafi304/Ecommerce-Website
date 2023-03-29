@@ -14,10 +14,11 @@ def login_member(request):
         # Catching erros
         if user is not None:
             login(request, user)
+            messages.success(request, f'You are now logged in as {request.user.username}')
             return redirect('home')
         else:
             # Login error message
-            messages.success(request, ('Error loging in !!!'))
+            messages.error(request, ('Error loging in !!!'))
             return redirect('login')
     
     # Landing page
@@ -26,7 +27,7 @@ def login_member(request):
     
 def logout_member(request):
     logout(request)
-    messages.success(request, 'You were logged out')
+    messages.warning(request, 'You were logged out')
     return redirect('home')
 
 def register_member(request):
@@ -38,7 +39,7 @@ def register_member(request):
             password = form.cleaned_data['password1']
             user = authenticate(username=username, password=password)
             login(request, user)
-            messages.success(request, 'You are now logged in')
+            messages.success(request, f'You are now logged in as {request.user.username}')
             return redirect('home')
         else:
             print(form.error_messages)
