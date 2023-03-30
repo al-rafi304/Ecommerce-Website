@@ -50,6 +50,10 @@ def shop(request, shop_id):
         'products': products
         })
 
+def product(request, product_id):
+    product = Product.objects.get(pk = product_id)
+    return render(request, 'store/product.html', {'product': product})
+
 def add_product(request, shop_id):
 
     if request.user.is_authenticated == False or request.user.is_seller == False or request.user.shop.pk != shop_id:

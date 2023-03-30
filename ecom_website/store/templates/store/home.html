@@ -10,7 +10,7 @@
 
     <ol>
         {% for product in Products %}
-            <li>{{product}}</li>
+            <li><a href="{% url 'product' product_id=product.pk %}">{{product}}</a></li>
         {% endfor %}
     </ol>
 </div>

@@ -11,10 +11,12 @@
             <ul class="list-group list-group-flush">
                 {% for product in products %}
                     <li class="list-group-item">
-                        <div class="row">
-                            <div class="col">{{ product.title }}</div>
-                            <div class="col"><button type="button" class="btn btn-danger btn-sm rounded-pill float-end">Edit</button></div>
-                        </div>
+                        <a href="{% url 'product' product_id=product.pk %}">
+                            <div class="row">
+                                <div class="col">{{ product.title }}</div>
+                                <div class="col"><button type="button" class="btn btn-danger btn-sm rounded-pill float-end">Edit</button></div>
+                            </div>
+                        </a>
                     </li>
                 {% endfor %}
             </ul>
