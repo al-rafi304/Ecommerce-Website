@@ -51,6 +51,12 @@ def shop(request, shop_id):
         })
 
 def add_product(request, shop_id):
+
+    if request.user.is_authenticated == False or request.user.is_seller == False or request.user.shop.pk != shop_id:
+        messages.error(request, 'You do not have the permission to view that page')
+        return redirect('home')
+
+
     my_shop = Shop.objects.get(pk = shop_id)
     products = my_shop.product_set.all()
     if request.method == 'POST':
@@ -69,4 +75,5 @@ def add_product(request, shop_id):
     else:
         form = ProductForm()
     return render(request, 'store/add_product.html', {'form': form})
+
     
