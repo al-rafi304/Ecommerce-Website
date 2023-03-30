@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Product, Shop
-from .forms import ShopForm
+from .forms import ShopForm, ProductForm
 # Create your views here.
 
 def home(request):
@@ -41,3 +41,32 @@ def create_shop(request):
     else:
         form = ShopForm()
     return render(request, 'store/create_shop.html', {'form': form})
+
+def shop(request, shop_id):
+    my_shop = Shop.objects.get(pk = shop_id)
+    products = my_shop.product_set.all()
+    return render(request, 'store/shop.html', {
+        'shop': my_shop,
+        'products': products
+        })
+
+def add_product(request, shop_id):
+    my_shop = Shop.objects.get(pk = shop_id)
+    products = my_shop.product_set.all()
+    if request.method == 'POST':
+        form = ProductForm(request.POST)
+        if form.is_valid():
+            product = form.save(commit=False)
+            product.shop = my_shop
+            form.save()
+
+            messages.success(request, 'Product has been added to your shop!')
+            return render(request, 'store/shop.html', {
+                'shop': my_shop,
+                'products': products
+            })
+            
+    else:
+        form = ProductForm()
+    return render(request, 'store/add_product.html', {'form': form})
+    

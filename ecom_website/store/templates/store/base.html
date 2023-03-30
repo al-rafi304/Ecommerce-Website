@@ -18,6 +18,23 @@
               <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a>
               </li>
+
+              {% if user.is_authenticated and user.is_seller %}
+              
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        {{ user.shop.title }}
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{% url 'shop' shop_id=user.shop.pk %}">Visit Shop</a></li>
+                        <li><a class="dropdown-item" href="{% url 'add_product' shop_id=user.shop.pk %}">Add Product</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#">Preference</a></li>
+                    </ul>
+                </li>
+
+              {% endif %}
+
               {% if user.is_authenticated and user.is_seller == False %}
               
                 <li class="nav-item">

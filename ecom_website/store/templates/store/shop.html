@@ -1,0 +1,24 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+    
+<div class='container '>
+        <h1>Welcome to {{ shop.title }}, {{ shop.owner.username }}</h1>
+        <div class="card">
+            <div class="card-header" align='center'>
+                Your Products
+            </div>
+            <ul class="list-group list-group-flush">
+                {% for product in products %}
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col">{{ product.title }}</div>
+                            <div class="col"><button type="button" class="btn btn-danger btn-sm rounded-pill float-end">Edit</button></div>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+</div>
+
+{% endblock content %}
