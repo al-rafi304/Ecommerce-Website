@@ -64,7 +64,7 @@ def add_product(request, shop_id):
     my_shop = Shop.objects.get(pk = shop_id)
     products = my_shop.product_set.all()
     if request.method == 'POST':
-        form = ProductForm(request.POST)
+        form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
             product = form.save(commit=False)
             product.shop = my_shop

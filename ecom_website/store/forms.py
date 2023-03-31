@@ -18,12 +18,13 @@ class ShopForm(forms.ModelForm):
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ('title', 'description', 'price')
+        fields = ('title', 'description', 'price', 'image')
 
         class_attr = 'form-control'
 
         widgets = {
             'title': forms.TextInput(attrs={'class': class_attr}),
             'description': forms.TextInput(attrs={'class': class_attr}),
-            'price': forms.NumberInput(attrs={'class': class_attr})
+            'price': forms.NumberInput(attrs={'class': class_attr}),
+            'image': forms.ClearableFileInput(attrs={'class': class_attr})
         }
