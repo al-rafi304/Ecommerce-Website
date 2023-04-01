@@ -1,0 +1,26 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+    
+<div class='container '>
+        <h1>Welcome to your cart, {{ user.username }}</h1>
+        <div class="card">
+            <div class="card-header" align="center">
+                Your Cart
+            </div>
+            <ul class="list-group list-group-flush">
+                {% for item in cart_items %}
+                    <li class="list-group-item">
+                        <a href="{% url 'product' product_id=item.product.pk %}">
+                            <div class="row">
+                                <div class="col">{{ item.product.title }}</div>
+                            </div>
+                        </a>
+                        <h5>Quantity: {{ item.quantity }}</h5>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+</div>
+
+{% endblock content %}

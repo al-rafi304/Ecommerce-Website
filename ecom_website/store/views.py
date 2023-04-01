@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from django.contrib import messages
-from .models import Product, Shop
+from .models import Product, Shop, Cart, Cart_item, Order, Order_item
 from .forms import ShopForm, ProductForm
 # Create your views here.
 
@@ -79,5 +80,37 @@ def add_product(request, shop_id):
     else:
         form = ProductForm()
     return render(request, 'store/add_product.html', {'form': form})
+
+def cart(request):
+    if request.user.is_authenticated:
+        user = request.user
+        cart_obj = Cart.objects.get(member=user)
+        cart_items = Cart_item.objects.filter(cart=cart_obj)        # SELECT * FROM Cart_item WHERE cart=cart_obj
+        return render(request, 'store/cart.html', {
+            'cart_items': cart_items,
+            'user': user,
+        })
+    else:
+        messages.error(request, 'You do not have the permission to view that page!')
+        return redirect('home')
+
+@login_required
+def add_to_cart(request):
+    if request.method == 'POST':
+        product_pk = request.POST.get('product_pk')
+        product_quantity = request.POST.get('product_quantity')
+        product_obj = Product.objects.get(pk=product_pk)
+        print('\n' + str(Product.objects.get(pk=product_pk)) + '\n')
+
+        cart_obj = Cart.objects.get(member = request.user.pk)
+        user = request.user.pk
+        cart_item = Cart_item.objects.create(cart=cart_obj, product=product_obj, quantity=product_quantity)
+        cart_item.save()
+
+        response_data = {'something': product_pk}
+        return JsonResponse(response_data)
+    else:
+        print("\nSOMETHING WENT WRONGE\n")
+
 
     

@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from .forms import RegisterForm
+from store.models import Cart
 
 # Create your views here.
 def login_member(request):
@@ -39,6 +40,7 @@ def register_member(request):
             password = form.cleaned_data['password1']
             user = authenticate(username=username, password=password)
             login(request, user)
+            cart_obj = Cart.objects.create(member=user)
             messages.success(request, f'You are now logged in as {request.user.username}')
             return redirect('home')
         else:
