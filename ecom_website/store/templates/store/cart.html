@@ -14,6 +14,7 @@
                     <ul class="list-group list-group-flush">
                         {% for item in cart_items %}
                             <li class="list-group-item">
+                                {% comment %} <img src="{{item.product.image.url}}"> {% endcomment %}
                                 <a href="{% url 'product' product_id=item.product.pk %}">
                                     <div class="row">
                                         <div class="col">{{ item.product.title }}</div>
@@ -25,7 +26,7 @@
                     </ul>
                 </div>
                 <div class="row justify-content-end p-2">
-                    <button class="btn btn-primary">Checkout</button>
+                    <a href="{% url 'checkout' %}" class="btn btn-primary">Checkout</a>
                 </div>
             </div>
         </div>

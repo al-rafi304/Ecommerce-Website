@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 import stripe
+import time
 from django.http import JsonResponse
 from django.contrib import messages
 from django.conf import settings
@@ -142,7 +143,69 @@ def add_to_cart(request):
         print("\nSOMETHING WENT WRONGE\n")
 
 def checkout(request):
-    return render(request, 'store/checkout.html', {})
+    user = request.user
+    cart = user.cart
+    cart_items = Cart_item.objects.filter(cart=cart)
+    checkout_items = {}
+    total_price = 0
+
+    for item in cart_items:
+        shop_id = item.product.shop.id
+        if shop_id not in checkout_items:
+            checkout_items[shop_id] = []
+        checkout_items[shop_id].append(item)
+        total_price += item.product.price * item.quantity
+
+    line_items = []
+    for shop_id, items in checkout_items.items():
+        for item in items:
+            line_items.append({
+                # 'name': item.product.title,
+                # 'amount': int(item.product.price * 100),
+                # 'currency': 'usd',
+                'quantity': item.quantity,
+
+                'price_data': {
+                    'currency': 'usd',
+                    'unit_amount': int(item.product.price * 100),
+                    'product_data': {
+                        'name': item.product.title,
+                        'description': item.product.description,
+                        # 'images': [item.product.image]
+                    }
+                }
+            })
+
+    transfers = []
+    for shop in checkout_items.keys():
+        amount = 0
+        for item in checkout_items[shop]:
+            amount += item.product.price * item.quantity
+        transfers.append({
+            'destination': shop,
+            'amount': amount
+        })
+
+    item = cart_items[0]
+    session = stripe.checkout.Session.create(
+        payment_method_types=['card'],
+        line_items=line_items,
+        mode='payment',
+        success_url= 'http://127.0.0.1:8000/',#'http://example.com/success?session_id={CHECKOUT_SESSION_ID}',
+        cancel_url= 'http://127.0.0.1:8000/cart', #'http://example.com/cancel',
+    )
+
+    # for transfer in transfers:
+    #     dest = Shop.objects.get(id=transfer['destination']).stripe_account_id
+    #     stripe.Transfer.create(
+    #         amount=int(transfer['amount']),
+    #         currency='USD',
+    #         destination=dest
+    #     )
+
+    # print(f'\nItems: {checkout_items}\nTotal Price: {total_price}\nLine_items: {line_items}\n{transfers}\n')
+    print(f'\n{item.product.image}\n')
+    return redirect(session.url, code=303)
 
 
     
