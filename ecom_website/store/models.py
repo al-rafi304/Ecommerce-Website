@@ -7,6 +7,7 @@ from member.models import Member
 class Shop(models.Model):
     title = models.CharField(max_length = 255)
     description = models.TextField()
+    stripe_account_id = models.CharField(max_length = 255)
 
     owner = models.OneToOneField(Member, on_delete = models.CASCADE)
 
@@ -38,7 +39,7 @@ class Cart(models.Model):
         return 'Cart of: ' + self.member.username
 
 class Cart_item(models.Model):
-    quantity = models.IntegerField(max_length = 3)
+    quantity = models.IntegerField()
 
     cart = models.ForeignKey(Cart, on_delete = models.CASCADE)
     product = models.ForeignKey(Product, on_delete = models.CASCADE)
@@ -75,7 +76,7 @@ class Order(models.Model):
             return f'By: {self.member.username} from: REMOVED'
 
 class Order_item(models.Model):
-    quantity = models.IntegerField(max_length = 3)
+    quantity = models.IntegerField()
 
     order = models.ForeignKey(Order, on_delete = models.CASCADE)
     product = models.ForeignKey(Product, null = True, on_delete = models.SET_NULL)
@@ -85,3 +86,10 @@ class Order_item(models.Model):
             return f'Item: {self.product.title} for {self.order.member.username}'
         else:
             return f'Item: REMOVED for {self.order.member.username}'
+        
+class Transaction(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    amount = models.DecimalField(max_digits=8, decimal_places=2)
+
+    order = models.OneToOneField(Order, on_delete = models.RESTRICT)
+    member = models.ForeignKey(Member, on_delete = models.CASCADE)

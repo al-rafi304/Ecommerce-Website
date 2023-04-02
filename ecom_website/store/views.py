@@ -1,9 +1,17 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+import stripe
 from django.http import JsonResponse
 from django.contrib import messages
+from django.conf import settings
 from .models import Product, Shop, Cart, Cart_item, Order, Order_item
 from .forms import ShopForm, ProductForm
+
+
+STRIPE_SECRET_KEY = settings.STRIPE_SECRET_KEY
+stripe.api_key = STRIPE_SECRET_KEY
+
+
 # Create your views here.
 
 def home(request):
@@ -37,8 +45,29 @@ def create_shop(request):
             request.user.is_seller = True
             request.user.save()
 
-            messages.success(request, 'Congratulations! You created you own shop!')
-            return redirect('home')
+            try:
+                account = stripe.Account.create(
+                    type='express',
+                    country='US',
+                    email=request.user.email,
+                    capabilities={
+                        'card_payments': {'requested': True},
+                        'transfers': {'requested': True},
+                    }
+                )
+
+                # Store the account ID in the database
+                shop.stripe_account_id = account.id
+                shop.save()
+
+                messages.success(request, 'Congratulations! You created you own shop!')
+                return redirect('home')
+            
+            except stripe.error.StripeError as e:
+                messages.error(request, str(e))
+                return render(request, 'create_shop.html')
+
+
     else:
         form = ShopForm()
     return render(request, 'store/create_shop.html', {'form': form})
@@ -111,6 +140,9 @@ def add_to_cart(request):
         return JsonResponse(response_data)
     else:
         print("\nSOMETHING WENT WRONGE\n")
+
+def checkout(request):
+    return render(request, 'store/checkout.html', {})
 
 
     
