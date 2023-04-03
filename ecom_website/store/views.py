@@ -2,10 +2,10 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 import stripe
 import time
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 from django.contrib import messages
 from django.conf import settings
-from .models import Product, Shop, Cart, Cart_item, Order, Order_item
+from .models import Product, Shop, Cart, Cart_item, Order, Order_item, Transaction
 from .forms import ShopForm, ProductForm
 
 
@@ -149,6 +149,7 @@ def checkout(request):
     checkout_items = {}
     total_price = 0
 
+    # Finding cart items
     for item in cart_items:
         shop_id = item.product.shop.id
         if shop_id not in checkout_items:
@@ -160,9 +161,6 @@ def checkout(request):
     for shop_id, items in checkout_items.items():
         for item in items:
             line_items.append({
-                # 'name': item.product.title,
-                # 'amount': int(item.product.price * 100),
-                # 'currency': 'usd',
                 'quantity': item.quantity,
 
                 'price_data': {
@@ -176,36 +174,78 @@ def checkout(request):
                 }
             })
 
-    transfers = []
-    for shop in checkout_items.keys():
-        amount = 0
-        for item in checkout_items[shop]:
-            amount += item.product.price * item.quantity
-        transfers.append({
-            'destination': shop,
-            'amount': amount
-        })
-
-    item = cart_items[0]
+    # Making the payment
     session = stripe.checkout.Session.create(
         payment_method_types=['card'],
         line_items=line_items,
         mode='payment',
-        success_url= 'http://127.0.0.1:8000/',#'http://example.com/success?session_id={CHECKOUT_SESSION_ID}',
+        success_url= 'http://127.0.0.1:8000/checkout/{CHECKOUT_SESSION_ID}/success',#'http://example.com/success?session_id={CHECKOUT_SESSION_ID}',
         cancel_url= 'http://127.0.0.1:8000/cart', #'http://example.com/cancel',
     )
 
-    # for transfer in transfers:
-    #     dest = Shop.objects.get(id=transfer['destination']).stripe_account_id
-    #     stripe.Transfer.create(
-    #         amount=int(transfer['amount']),
-    #         currency='USD',
-    #         destination=dest
-    #     )
-
-    # print(f'\nItems: {checkout_items}\nTotal Price: {total_price}\nLine_items: {line_items}\n{transfers}\n')
-    print(f'\n{item.product.image}\n')
     return redirect(session.url, code=303)
+
+def checkout_success(request, session_id):
+    session = stripe.checkout.Session.retrieve(session_id)
+    print("session: ", session)
+    total = session.amount_total
+    transaction_id = session.payment_intent
+    cart = request.user.cart
+    cart_items = Cart_item.objects.filter(cart=cart)       # SELECT * FROM Cart_item WHERE cart=user.cart.id
+
+    # Making sure records are not added twice
+    if Transaction.objects.filter(stripe_trx_id=transaction_id).exists():
+        raise Http404('Error page not found')
+
+    # Getting all items which were checked out
+    checkout_items = {}
+    for item in cart_items:
+        shop_id = item.product.shop
+        if shop_id not in checkout_items:
+            checkout_items[shop_id] = []
+        checkout_items[shop_id].append(item)
+
+    # Saving Order, Order_item, Transaction for each shop
+    for shop, items in checkout_items.items():
+        order = Order(member=request.user, shop=shop)
+        order.save()
+        temp_amount = 0
+        for item in items:
+            instance = Order_item(
+                product=item.product,
+                  order=order,
+                    quantity=item.quantity
+            )
+            instance.save()
+            temp_amount += item.product.price
+
+        trx_instance = Transaction(
+            amount = temp_amount,
+            order = order,
+            member = request.user,
+            stripe_trx_id = transaction_id
+        )
+        trx_instance.save()
+    
+    # Emptying cart
+    for item in cart_items:
+        item.delete()
+
+    return render(request, 'store/checkout_success.html', {
+        'trx': transaction_id,
+        'total': total/100
+    })
+
+def test(request):
+    session = stripe.checkout.Session.retrieve('sdfsdfsdf')
+    print('sesion: ', session)
+    transaction_id = 'asdlfhjawodif'
+    total = 2197
+    return render(request, 'store/checkout_success.html', {
+        'trx': transaction_id,
+        'total': total/100
+    })
+
 
 
     

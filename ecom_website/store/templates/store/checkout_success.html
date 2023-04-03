@@ -1,0 +1,30 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+
+<style>
+    i {
+        color: #9ABC66;
+        font-size: 100px;
+        line-height: 200px;
+        margin-left:-15px;
+      }
+</style>
+
+<div class='container position-absolute top-50 start-50 translate-middle bg-light text-dark rounded shadow p-3 mb-5 bg-body-tertiary rounded' style="width: 30%">
+    <div class='d-flex justify-content-center flex-column'>
+        <i class="checkmark" align='center'>✓</i>
+        <h1 align='center'>Transaction Complete !</h1>
+        <hr style="border-top: dotted 2px;">
+        <div class='container p-3' align='center' >
+            <h6 class = 'text-secondary'>Transaction ID: {{ trx }}</h6>
+            <h6 class = 'text-secondary'>Total Amount: {{ total }} USD</h6>
+        </div>
+        <br>
+        <a align='center' href="{% url 'home' %}">Continue shopping</a>
+    </div>
+</div>
+
+
+
+{% endblock content %}
