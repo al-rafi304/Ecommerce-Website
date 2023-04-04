@@ -2,21 +2,54 @@
 
 {% block content %}
 <div class='container position-absolute top-50 start-50 translate-middle bg-light text-dark rounded shadow p-3 mb-5 bg-body-tertiary rounded'>
-    <div class='row'>
+    <div class='d-flex flex-row'>
         <div class='col-md-4'>
             <img src='{{ product.image.url }}' class='w-100'>
         </div>
-        <div class='col-md-8'>
-            <div class='row'><h2>{{ product.title }}</h2></div>
-            <div class='row'>
+        <div class=' d-flex flex-column mb-3 px-4 justify-content-between'>
+            <div>
+                <h2>{{ product.title }}</h2>
                 <h5>About</h5>
                 <p>{{ product.description }}</p>
             </div>
-            <div class='row mt-auto'><h3>Price: {{ product.price }}TK</h3></div>
-            <div><a href='#' class='btn btn-primary'>Add to Cart</a></div>
+
+            <div>
+                <h3>Price: {{ product.price }}TK</h3>
+                {% comment %} <div><a href='#' class='btn btn-primary'>Add to Cart</a></div> {% endcomment %}
+                {% if user.is_authenticated %}
+                <form method="POST" class="add-to-cart-form">
+                    {% csrf_token %}
+                    <input type="number" name="product_quantity" min="1" max="20 "step="1" value="1" style="width: 40px; height: auto">
+                    <input type="hidden" name="product_pk" value="{{ product.pk }}">
+                    <button type="submit" class="btn btn-primary">Add to Cart</button>
+                </form>
+                {% endif %}
+            </div>
         </div>
     </div>
 </div>
+
+
+<!-- This is AJAX request which can do POST and GET requests without reloading the page. -->
+<script>
+    $(document).ready(function() {
+        $('.add-to-cart-form').submit(function(event) {
+            event.preventDefault(); // prevent the default form submission behavior
+            var $form = $(this); // get a reference to the form element
+            $.ajax({
+                url: '{% url 'add_to_cart' %}',
+                method: 'POST',
+                data: $form.serialize(),    // serialize means it takes the form data and converts to a encoded string i.e: name=John+Doe&email=john.doe@example.com
+                success: function(response) {
+                    console.log(response); // log the response to the console
+                },
+                error: function(response) {
+                    console.log(response); // log the error to the console
+                }
+            });
+        });
+    });
+</script>
 {% endblock content %}
 
 

@@ -43,14 +43,6 @@
                     <h5 class="card-title"><a class="text-decoration-none" href="{% url 'product' product_id=product.pk%}">{{ product }}</h5></a>
                     <p class="card-text">{{ product.description | truncatewords:10}}</p>
                     <h5 class="float-end w-100">{{ product.price }}TK</h5>
-                    {% comment %} {% if user.is_authenticated %}
-                        <form method="POST" class="add-to-cart-form">
-                            {% csrf_token %}
-                            <input type="number" name="product_quantity" min="1" max="20 "step="1" value="1">
-                            <input type="hidden" name="product_pk" value="{{ product.pk }}">
-                            <button type="submit" class="btn btn-primary w-100">Add to Cart</button>
-                        </form>
-                    {% endif %} {% endcomment %}
                 </div>
             </div>
         </div>
@@ -58,28 +50,5 @@
     </div>
 
 </div>
-
-{% comment %}
-This is AJAX request which can do POST and GET requests without reloading the page.
-{% endcomment %}
-<script>
-    $(document).ready(function() {
-        $('.add-to-cart-form').submit(function(event) {
-            event.preventDefault(); // prevent the default form submission behavior
-            var $form = $(this); // get a reference to the form element
-            $.ajax({
-                url: '{% url 'add_to_cart' %}',
-                method: 'POST',
-                data: $form.serialize(),    // serialize means it takes the form data and converts to a encoded string i.e: name=John+Doe&email=john.doe@example.com
-                success: function(response) {
-                    console.log(response); // log the response to the console
-                },
-                error: function(response) {
-                    console.log(response); // log the error to the console
-                }
-            });
-        });
-    });
-</script>
 
 {% endblock content %}
