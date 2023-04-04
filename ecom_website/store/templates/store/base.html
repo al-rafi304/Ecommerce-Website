@@ -82,8 +82,12 @@
                     <li class="nav-item">
                         <div class="dropdown">
                             <button class="btn btn-link dropdown-toggle rounded-circle text-white" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration:none; color:inherit;"  >
-                                {% comment %} <img src="https://avatars.githubusercontent.com/u/81813869?v=4" alt="User Profile Image" class="rounded-circle border-0" width="30" height="30"> {% endcomment %}
-                                <i class="bi bi-person-fill"></i>
+                                {% if request.user.profile_img %}
+                                
+                                    <img src="{{request.user.profile_img.url}}" alt="User Profile Image" class="rounded-circle border-0 object-fit-cover" width="30" height="30">
+                                {% else %}
+                                    <i class="bi bi-person-fill"></i>
+                                {% endif %}
                             </button>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="{% url 'cart' %}">Your Cart</a></li>

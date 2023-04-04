@@ -5,7 +5,12 @@ from .models import Member
 class RegisterForm(UserCreationForm):
     class Meta:
         model = Member
-        fields = ('first_name', 'last_name', 'username', 'email', 'password1', 'password2', 'phone', 'dob', 'address')
+        fields = ('first_name', 'last_name', 'username', 'email', 'password1', 'password2', 'phone', 'dob', 'address', 'profile_img')
+
+        labels = {
+            'dob': 'Date of Birth (YYYY-MM-DD)',
+            'profile_img': 'Profile Picture'
+        }
 
     def __init__(self, *args, **kwargs) -> None:
         super(RegisterForm, self).__init__(*args, **kwargs)
@@ -22,3 +27,4 @@ class RegisterForm(UserCreationForm):
         self.fields['phone'].widget.attrs['class'] = class_attr
         self.fields['dob'].widget.attrs['class'] = class_attr
         self.fields['address'].widget.attrs['class'] = class_attr
+        self.fields['profile_img'].widget.attrs['class'] = class_attr

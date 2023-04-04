@@ -8,6 +8,8 @@ class Shop(models.Model):
     title = models.CharField(max_length = 255)
     description = models.TextField()
     stripe_account_id = models.CharField(max_length = 255)
+    banner_img = models.ImageField(upload_to='images/', null=True, blank=True)
+    profile_img = models.ImageField(upload_to='images/')
 
     owner = models.OneToOneField(Member, on_delete = models.CASCADE)
 
@@ -18,6 +20,7 @@ class Product(models.Model):
     title = models.CharField(max_length = 255)
     description = models.TextField()
     price = models.DecimalField(max_digits = 8, decimal_places = 2)
+    stock = models.IntegerField()
     image = models.ImageField(upload_to='images/')
 
     shop = models.ForeignKey(Shop, on_delete = models.CASCADE)

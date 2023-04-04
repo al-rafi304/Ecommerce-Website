@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 import stripe
-import time
+import random
 from django.http import JsonResponse, Http404
 from django.contrib import messages
 from django.conf import settings
+from django.db.models import Q
 from .models import Product, Shop, Cart, Cart_item, Order, Order_item, Transaction
 from .forms import ShopForm, ProductForm
 
@@ -17,10 +18,25 @@ stripe.api_key = STRIPE_SECRET_KEY
 
 def home(request):
     products = Product.objects.all()
+    shops = Shop.objects.all()
+    display_shops = Shop.objects.exclude(Q(banner_img='') | Q(banner_img__isnull=True))     # SELECT * FROM Shop WHERE banner_img IS NOT NULL OR banner_img!='';
+    print(f'\n\n{display_shops}\n\n')
+
+    display_shop_list = list(display_shops)
+    shops_list = list(shops)
+    product_list = list(products)
+
+    # Randomly suffling 
+    random.shuffle(shops_list)      
+    random.shuffle(product_list)
+    random.shuffle(display_shop_list)
+
     return render(
         request, 'store/home.html',
         {
-            'Products': products,
+            'Products': product_list,
+            'shops': shops_list[:4],
+            'display_shops': display_shop_list,
             'request': request,
         }
         )
@@ -37,7 +53,7 @@ def create_shop(request):
 
     # View handling
     if request.method == 'POST':
-        form = ShopForm(request.POST)
+        form = ShopForm(request.POST, request.FILES)
         if form.is_valid():
             shop = form.save(commit=False)  # Creating shop instance without saving in database
             shop.owner = request.user       # Adding foreign key

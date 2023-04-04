@@ -8,6 +8,7 @@ class Member(AbstractUser):
     dob = models.DateField(null=True)
     address = models.TextField(null=True)
     is_seller = models.BooleanField(default = False)
+    profile_img = models.ImageField(upload_to='images/', null=True, blank=True)
 
 
     def __str__(self) -> str:

@@ -7,7 +7,7 @@
                 <div class="card bg-light text-dark rounded shadow p-3 mb-5 bg-body-tertiary rounded border-0">
                     <div class="card-body">
                         <h1 class="card-title">Register</h1>
-                        <form method="POST">
+                        <form method="POST" enctype="multipart/form-data">
                             {% csrf_token %}
                             {{ form.as_p }}
                             <button type="submit" class="btn btn-primary">Register</button>
