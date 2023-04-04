@@ -6,74 +6,90 @@
     <title>{% block title %}{% endblock title %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.4/font/bootstrap-icons.css">
 
   </head>
   <body>
     <nav class="navbar navbar-expand-lg bg-body-tertiary bg-dark sticky-top shadow" data-bs-theme="dark">
         <div class="container">
-          <a class="navbar-brand" href="#">Navbar</a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <li class="nav-item">
-                <a class="nav-link" aria-current="page" href="{% url 'home' %}">Home</a>
-              </li>
-
-              {% if user.is_authenticated and user.is_seller %}
-              
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        {{ user.shop.title }}
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="{% url 'shop' shop_id=user.shop.pk %}">Visit Shop</a></li>
-                        <li><a class="dropdown-item" href="{% url 'add_product' shop_id=user.shop.pk %}">Add Product</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#">Preference</a></li>
-                    </ul>
-                </li>
-
-              {% endif %}
-
-              {% if user.is_authenticated and user.is_seller == False %}
-              
+            <a class="navbar-brand" href="{% url 'home' %}">Home</a>
+            
+            <!-- Search Bar -->
+            <ul class="navbar-nav w-100 justify-content-center">
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{% url 'create_shop' %}">Create Shop</a>
+                    <form class="d-flex" role="search">
+                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" style="width: 500px">
+                        <button class="btn btn-outline-light" type="submit">Search</button>
+                    </form>
                 </li>
-
-              {% endif %}
-              <li class="nav-item">
-                {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="{% url 'cart' %}">Cart</a>
-                    </li>
-                    <a class="nav-link" data-bs-toggle="modal" data-bs-target="#logoutModal" href="#">Logout</a>
-                {% else %}
-                <a class="nav-link" href="{% url 'login' %}">Login</a>
-                {% endif %}
-              </li>
-              {% comment %} <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Dropdown
-                </a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="#">Action</a></li>
-                  <li><a class="dropdown-item" href="#">Another action</a></li>
-                  <li><hr class="dropdown-divider"></li>
-                  <li><a class="dropdown-item" href="#">Something else here</a></li>
-                </ul>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link disabled">Disabled</a>
-              </li> {% endcomment %}
             </ul>
-            <form class="d-flex" role="search">
-              <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-              <button class="btn btn-outline-light" type="submit">Search</button>
-            </form>
-          </div>
+
+
+            <!-- Toggle Button -->
+            <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Right Side -->
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto">
+                    
+                    <!-- Shop Button -->
+                    {% if user.is_authenticated and user.is_seller %}
+                    
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            {% comment %} {{ user.shop.title }} {% endcomment %}
+                            <i class="bi bi-shop-window"></i>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'shop' shop_id=user.shop.pk %}">Visit {{ user.shop.title }}</a></li>
+                            <li><a class="dropdown-item" href="{% url 'add_product' shop_id=user.shop.pk %}">Add Product</a></li>
+                            <li><a class="dropdown-item" href="{% url 'add_product' shop_id=user.shop.pk %}">View Orders</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#">Preference</a></li>
+                        </ul>
+                    </li>
+
+                    {% endif %}
+                    
+                    <!-- Create Shop Button -->
+                    {% if user.is_authenticated and user.is_seller == False %}
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="{% url 'create_shop' %}">Create Shop</a>
+                    </li>
+                    {% endif %}
+                    
+                    <!-- Cart -->
+                    <li class="nav-item">
+                        <a class='nav-link' href="{% url 'cart' %}">
+                            {% comment %} <span class=" badge rounded-pill bg-danger">99+</span> {% endcomment %}
+                            <i class="bi bi-cart"></i>
+                        </a>
+                    </li>
+                    
+                    <!-- User Profile Icon -->
+                    <li class="nav-item">
+                    {% if user.is_authenticated %}
+                        <div class="dropdown">
+                            <button class="btn btn-link dropdown-toggle rounded-circle text-white" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration:none; color:inherit;"  >
+                                {% comment %} <img src="https://avatars.githubusercontent.com/u/81813869?v=4" alt="User Profile Image" class="rounded-circle border-0" width="30" height="30"> {% endcomment %}
+                                <i class="bi bi-person-fill"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'cart' %}">Your Cart</a></li>
+                                <li><a class="dropdown-item" href="#">Your Orders</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#logoutModal" href="#">Logout</a></li>
+                            </ul>
+                        </div>
+                    {% else %}
+                    <a class="btn btn-light me-2" href="{% url 'login' %}">Login</a>
+                    {% endif %}
+                    </li>
+                </ul>
+
+            </div>
         </div>
     </nav>
     
