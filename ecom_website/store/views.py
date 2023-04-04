@@ -118,7 +118,7 @@ def add_product(request, shop_id):
             form.save()
 
             messages.success(request, 'Product has been added to your shop!')
-            return render(request, 'store/shop.html', {
+            return render(request, 'store/home.html', {
                 'shop': my_shop,
                 'products': products
             })

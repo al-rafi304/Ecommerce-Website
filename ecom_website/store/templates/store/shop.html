@@ -1,26 +1,39 @@
 {% extends 'store/base.html' %}
 
 {% block content %}
-    
-<div class='container '>
-        <h1>Welcome to {{ shop.title }}, {{ shop.owner.username }}</h1>
-        <div class="card">
-            <div class="card-header" align='center'>
-                Your Products
-            </div>
-            <ul class="list-group list-group-flush">
-                {% for product in products %}
-                    <li class="list-group-item">
-                        <a href="{% url 'product' product_id=product.pk %}">
-                            <div class="row">
-                                <div class="col">{{ product.title }}</div>
-                                <div class="col"><button type="button" class="btn btn-danger btn-sm rounded-pill float-end">Edit</button></div>
-                            </div>
-                        </a>
-                    </li>
-                {% endfor %}
-            </ul>
+
+
+{% comment %} <img class="w-100 object-fit-cover" src="{{shop.banner_img.url}}" style="height: 400px;"> {% endcomment %}
+<div class='container py-4'>
+    <h1 align="center">Welcome to {{ shop.title }}</h1>
+    <div class="card mb-3" style="max-width: auto;">
+        <div class="row g-0">
+        <div class="d-flex col-md-4">
+            <img src="{{ shop.profile_img.url }}" class="img-fluid rounded-start object-fit-cover">
         </div>
+        <div class="col-md-8">
+            <div class="card-body">
+            <h5 class="card-title">About</h5>
+            <p class="card-text">{{ shop.description }}</p>
+            <p class="card-text"><small class="text-body-secondary">{{ shop.created_at }}</small></p>
+            </div>
+        </div>
+        </div>
+    </div>
+    <h2>Products</h2>
+    <div class="row">
+        {% for product in products %}
+        <div class="col-sm-6 col-md-4 col-lg-3 mb-3" style="max-height: auto; max-width:250px">
+            <div class="card h-100 bg-light text-dark border-0 shadow-sm">
+                <img src="{{ product.image.url }}" class="card-img-top img-fluid object-fit-cover" style="height: 70%; width: auto">
+                <div class="card-body">
+                    <h5 class="card-title"><a class="text-decoration-none" href="{% url 'product' product_id=product.pk%}">{{ product }}</h5></a>
+                    <h6 class="float-end w-100">{{ product.price }}$</h6>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 </div>
 
 {% endblock content %}

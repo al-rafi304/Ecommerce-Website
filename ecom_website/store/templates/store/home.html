@@ -7,7 +7,7 @@
         <div class="carousel-inner">
             {% for shop in display_shops %}            
                 <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                    <a href="#"><img src="{{ shop.banner_img.url }}" class="d-block w-100" alt="..."></a>
+                    <a href="{% url 'shop' shop_id=shop.id %}"><img src="{{ shop.banner_img.url }}" class="d-block w-100" alt="..."></a>
                 </div>
             {% endfor %}
         </div>
@@ -24,11 +24,11 @@
 
 
 <div class='container py-5'>
-    {% if request.user.is_authenticated %}
+    {% comment %} {% if request.user.is_authenticated %}
         <h1>Hello {{ request.user.username }}</h1>
     {% else %}
         <h1> Hello Stranger </h1>
-    {% endif %}
+    {% endif %} {% endcomment %}
 
     <!-- Shop Section -->
     <h2>Visit Shops</h2>
@@ -38,7 +38,7 @@
             <div class="card h-100 bg-light text-dark border-0 shadow-sm">
                 <img src="{{ shop.profile_img.url }}" class="card-img-top img-fluid object-fit-cover" style="height: 80%; width: auto" alt="...">
                 <div class="card-body">
-                    <h5 align="center" class="card-title"><a class="text-decoration-none" href="#"><i class="bi bi-shop"></i> {{ shop.title }}</h5></a>
+                    <h5 align="center" class="card-title"><a class="text-decoration-none" href="{% url 'shop' shop_id=shop.pk %}"><i class="bi bi-shop"></i> {{ shop.title }}</h5></a>
                     {% comment %} <p class="card-text">{{ shop.description | truncatewords:10}}</p> {% endcomment %}
                 </div>
             </div>
