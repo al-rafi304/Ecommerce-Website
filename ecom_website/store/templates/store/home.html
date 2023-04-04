@@ -1,6 +1,32 @@
 {% extends 'store/base.html' %}
 
 {% block content %}
+
+<div class='container-fluid w-100 p-0'>
+    <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img src="https://images.pexels.com/photos/906150/pexels-photo-906150.jpeg?auto=compress&cs=tinysrgb&w=1600" class="d-block w-100" alt="...">
+        </div>
+        <div class="carousel-item">
+            <img src="https://images.pexels.com/photos/462162/pexels-photo-462162.jpeg?auto=compress&cs=tinysrgb&w=1600" class="d-block w-100" alt="...">
+        </div>
+        <div class="carousel-item">
+            <img src="https://images.pexels.com/photos/4482677/pexels-photo-4482677.jpeg?auto=compress&cs=tinysrgb&w=1600" class="d-block w-100" alt="...">
+        </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+</div>
+
+
 <div class='container py-5'>
     {% if request.user.is_authenticated %}
         <h1>Hello {{ request.user.username }}</h1>
@@ -17,14 +43,14 @@
                     <h5 class="card-title"><a class="text-decoration-none" href="{% url 'product' product_id=product.pk%}">{{ product }}</h5></a>
                     <p class="card-text">{{ product.description | truncatewords:10}}</p>
                     <h5 class="float-end w-100">{{ product.price }}TK</h5>
-                    {% if user.is_authenticated %}
+                    {% comment %} {% if user.is_authenticated %}
                         <form method="POST" class="add-to-cart-form">
                             {% csrf_token %}
                             <input type="number" name="product_quantity" min="1" max="20 "step="1" value="1">
                             <input type="hidden" name="product_pk" value="{{ product.pk }}">
                             <button type="submit" class="btn btn-primary w-100">Add to Cart</button>
                         </form>
-                    {% endif %}
+                    {% endif %} {% endcomment %}
                 </div>
             </div>
         </div>
