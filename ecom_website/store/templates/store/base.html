@@ -52,7 +52,7 @@
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="{% url 'shop' shop_id=user.shop.pk %}">Visit {{ user.shop.title }}</a></li>
                             <li><a class="dropdown-item" href="{% url 'add_product' shop_id=user.shop.pk %}">Add Product</a></li>
-                            <li><a class="dropdown-item" href="{% url 'add_product' shop_id=user.shop.pk %}">View Orders</a></li>
+                            <li><a class="dropdown-item" href="{% url 'shop_orders' shop_id=user.shop.pk %}">View Orders</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="#">Preference</a></li>
                         </ul>

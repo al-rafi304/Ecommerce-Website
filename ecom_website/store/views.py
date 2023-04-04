@@ -281,7 +281,36 @@ def my_orders(request):
         'orders': orders
     })
 
+def shop_orders(request, shop_id):
 
+    if not request.user.is_seller or not request.user.shop.id == shop_id:
+        raise Http404('Error page not found')
+    
+    shop = Shop.objects.get(id=shop_id)
+    orders_obj = Order.objects.filter(shop=shop)      # SELECT * FROM Order WHERE member=request.user
+
+    orders = []
+
+    for order in orders_obj:
+        order_dict = {}
+        order_dict['order'] = order
+        order_dict['total'] = 0
+        order_dict['products'] = []
+
+        for order_item in Order_item.objects.filter(order=order):   #SELECT * FROM Order_item WHERE order=order
+            title = order_item.product.title
+            price = order_item.product.price
+            quantity = order_item.quantity
+            item = {'title': title, 'quantity': quantity}
+            order_dict['products'].append(item)
+            order_dict['total'] += price * quantity
+
+        orders.append(order_dict)
+
+
+    return render(request, 'store/shop_orders.html', {
+        'orders': orders
+    })
 
 
 
@@ -296,8 +325,8 @@ def my_orders(request):
 
 
 def test(request):
-    session = stripe.checkout.Session.retrieve('sdfsdfsdf')
-    print('sesion: ', session)
+    # session = stripe.checkout.Session.retrieve('sdfsdfsdf')
+    # print('sesion: ', session)
     transaction_id = 'asdlfhjawodif'
     total = 2197
     return render(request, 'store/checkout_success.html', {

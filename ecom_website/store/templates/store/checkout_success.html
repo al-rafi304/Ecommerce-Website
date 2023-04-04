@@ -3,7 +3,7 @@
 {% block content %}
 
 <style>
-    i {
+    .checkmark {
         color: #9ABC66;
         font-size: 100px;
         line-height: 200px;
@@ -21,7 +21,8 @@
             <h6 class = 'text-secondary'>Total Amount: {{ total }} USD</h6>
         </div>
         <br>
-        <a align='center' href="{% url 'home' %}">Continue shopping</a>
+        <a class="text-decoration-none" align='center' href="{% url 'home' %}">Continue Shopping</a> 
+        <a class="text-decoration-none" align='center' href="{% url 'my_orders' %}">View Orders</a>
     </div>
 </div>
 
