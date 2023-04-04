@@ -1,0 +1,35 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+
+<div class="container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Shop</th>
+                <th>Products</th>
+                <th>Total</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.order.created_at}}</td>
+                <td>{{ order.order.shop }}</td>
+                <td>
+                    {% for product in order.products %}
+                        {{ product.title }} x{{ product.quantity }}<br>
+                    {% endfor %}
+                </td>
+                <td>{{ order.total }}$</td>
+                <td>{{ order.order.order_status }}</td>
+                {% endfor %}
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+
+{% endblock content %}

@@ -236,6 +236,49 @@ def checkout_success(request, session_id):
         'total': total/100
     })
 
+
+def my_orders(request):
+    orders_obj = Order.objects.filter(member=request.user)      # SELECT * FROM Order WHERE member=request.user
+
+    orders = []
+
+    for order in orders_obj:
+        order_dict = {}
+        order_dict['order'] = order
+        order_dict['total'] = 0
+        order_dict['products'] = []
+
+        for order_item in Order_item.objects.filter(order=order):   #SELECT * FROM Order_item WHERE order=order
+            title = order_item.product.title
+            price = order_item.product.price
+            quantity = order_item.quantity
+            item = {'title': title, 'quantity': quantity}
+            order_dict['products'].append(item)
+            order_dict['total'] += price * quantity
+
+        orders.append(order_dict)
+    
+    print(f"\n\n{orders}\n\n")
+
+
+    return render(request, 'store/my_orders.html', {
+        'orders': orders
+    })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def test(request):
     session = stripe.checkout.Session.retrieve('sdfsdfsdf')
     print('sesion: ', session)
