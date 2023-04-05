@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 import stripe
 import random
-from django.http import JsonResponse, Http404
+import csv
+from django.http import JsonResponse, Http404, HttpResponse
 from django.contrib import messages
 from django.conf import settings
 from django.db.models import Q
@@ -283,6 +284,7 @@ def my_orders(request):
         order_dict = {}
         order_dict['order'] = order
         order_dict['total'] = 0
+        order_dict['trx'] = Transaction.objects.get(order=order)
         order_dict['products'] = []
 
         for order_item in Order_item.objects.filter(order=order):   #SELECT * FROM Order_item WHERE order=order
@@ -342,8 +344,67 @@ def shop_orders(request, shop_id):
         'orders': orders
     })
 
+def download_order(request, shop_id):
+    print('sdfsdf')
+    if request.user.shop.id != shop_id:
+        raise Http404("Page not found")
+    
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=orders.csv'
 
+    shop = Shop.objects.get(id=shop_id)
+    orders = []
+    orders_inst = Order.objects.filter(shop=shop)
 
+    for order in orders_inst:
+        member = order.member
+        member.first_name
+        temp = {}
+        temp['order'] = order
+        temp['user'] = member
+        temp['items'] = []
+        temp['total'] = 0
+        for item in Order_item.objects.filter(order=order):
+            temp['items'].append({
+                'product': item.product.title,
+                'quantity': item.quantity
+            })
+            temp['total'] += item.product.price * item.quantity
+        orders.append(temp)
+
+        print(orders)
+
+    # CSV writer
+    writer = csv.writer(response)
+
+    # Writing Headers
+    writer.writerow([
+        'Order ID',
+        'Placed At',
+        'Order From',
+        'Shipping Address',
+        'Email',
+        'Phone',
+        'Products',
+        'Total',
+        'Status'
+    ])
+
+    # Writing each row
+    for order in orders:
+        writer.writerow([
+            order['order'].id,
+            order['order'].created_at,
+            f"{order['user'].first_name} {order['user'].last_name}",
+            order['user'].address,
+            order['user'].email,
+            order['user'].phone,
+            order['items'],
+            f"${order['total']}",
+            order['order'].order_status
+        ])
+
+    return response
 
 
 

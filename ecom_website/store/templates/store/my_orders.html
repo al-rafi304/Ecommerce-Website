@@ -6,6 +6,7 @@
     <table class="table table-hover">
         <thead>
             <tr>
+                <th>Order ID</th>
                 <th>Date</th>
                 <th>Shop</th>
                 <th>Products</th>
@@ -21,6 +22,7 @@
             {% elif order.order.order_status == order.order.PROCESSING%}table-primary
             {% elif order.order.order_status == order.order.DELIVERED%}table-success
             {% endif %}">
+                <td>#order{{ order.order.id}}</td>
                 <td>{{ order.order.created_at}}</td>
                 <td>{{ order.order.shop }}</td>
                 <td>
@@ -28,7 +30,7 @@
                         {{ product.title }} x{{ product.quantity }}<br>
                     {% endfor %}
                 </td>
-                <td>{{ order.total }}$</td>
+                <td>${{ order.total }}</td>
                 <td>{{ order.order.get_order_status_display }}</td>         <!-- get_attributeName_display give the human readable name -->
                 {% endfor %}
             </tr>
