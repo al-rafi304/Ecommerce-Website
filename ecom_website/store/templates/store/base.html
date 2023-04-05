@@ -72,8 +72,10 @@
 
                     <!-- Cart -->
                     <li class="nav-item">
-                        <a class='nav-link' href="{% url 'cart' %}">
-                            {% comment %} <span class=" badge rounded-pill bg-danger">99+</span> {% endcomment %}
+                        <a class='nav-link position-relative' href="{% url 'cart' %}">
+                            {% if request.user.cart.num_items > 0 %}
+                                <span class="position-absolute top-200 start-100 translate-middle badge rounded-pill bg-danger" id='cart_item_count'>{{request.user.cart.num_items}}</span>
+                            {% endif %}
                             <i class="bi bi-cart"></i>
                         </a>
                     </li>

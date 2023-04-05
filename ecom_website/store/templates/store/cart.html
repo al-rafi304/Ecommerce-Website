@@ -2,10 +2,10 @@
 
 {% block content %}
     
-<div class='container'>
+<div class='container mt-4' style='width: 800px'>
     <div class='col d-flex justify-content-center'>
-        <div class='row'>
-            <h1>Welcome to your cart, {{ user.username }}</h1>
+        <div class='row w-100'>
+            {% comment %} <h1>Welcome to your cart, {{ user.username }}</h1> {% endcomment %}
             <div class="cart-container">
                 <div class="card">
                     <div class="card-header" align="center">
@@ -13,21 +13,39 @@
                     </div>
                     <ul class="list-group list-group-flush">
                         {% for item in cart_items %}
-                            <li class="list-group-item">
-                                {% comment %} <img src="{{item.product.image.url}}"> {% endcomment %}
-                                <a href="{% url 'product' product_id=item.product.pk %}">
-                                    <div class="row">
-                                        <div class="col">{{ item.product.title }}</div>
+                            <li class="list-group-item w-100">
+                                <div class='row w-100'>
+                                    <div class="col-lg-3">
+                                        <img src="{{item.item.product.image.url}}" class='img object-fit-cover border-0 rounded' style="height: 120px; width: 120px">
                                     </div>
-                                </a>
-                                <h5>Quantity: {{ item.quantity }}</h5>
+                                    <div class="col">
+                                        <h5><a class='text-decoration-none' href="{% url 'product' product_id=item.item.product.pk %}">{{ item.item.product.title }}</a></h5>
+                                        <p class='text-body-secondary'>
+                                            From <a href="#" class="text-decoration-none">{{ item.item.product.shop }}</a>
+                                        </p>
+                                        <p class='text-body-secondary m-0'>Quantity: {{ item.item.quantity }}</p>
+                                        <h6>Price: {{ item.total_price }}$</h6>
+                                    </div>
+                                    <div class="col-lg-2 d-flex align-items-center justify-content-end">
+                                        <form method='POST'>
+                                            {% csrf_token %}
+                                            <input type='hidden' name='item_id' value='{{ item.item.id }}'>
+                                            <button type="submit" class="btn-close" aria-label="Close"></button>
+                                        </form>
+                                    </div>
+                                </div>
                             </li>
                         {% endfor %}
                     </ul>
                 </div>
-                <div class="row justify-content-end p-2">
-                    <a href="{% url 'checkout' %}" class="btn btn-primary">Checkout</a>
-                </div>
+                {% if cart_items|length == 0 %}
+                    <h4 class='d-flex justify-content-center'>You don't have anything in your cart...</h4>
+                {% else %}
+                    <h4 class='d-flex justify-content-center'>Total Price: {{ total_price }}$</h4>
+                    <div class="row justify-content-end p-2">
+                        <a href="{% url 'checkout' %}" class="btn btn-primary">Checkout</a>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>

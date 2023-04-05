@@ -39,6 +39,10 @@ class Cart(models.Model):
     # def total_price(self):
     #     pass
 
+    @property
+    def num_items(self):
+        return len(self.cart_item_set.all())
+
     def __str__(self) -> str:
         return 'Cart of: ' + self.member.username
 

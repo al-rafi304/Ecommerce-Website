@@ -129,12 +129,30 @@ def add_product(request, shop_id):
 
 def cart(request):
     if request.user.is_authenticated:
+
+        if request.method == "POST":
+            item_id = request.POST['item_id']
+            print(item_id)
+            Cart_item.objects.get(id=item_id).delete()
+            return redirect('cart')
+
+
         user = request.user
         cart_obj = Cart.objects.get(member=user)
         cart_items = Cart_item.objects.filter(cart=cart_obj)        # SELECT * FROM Cart_item WHERE cart=cart_obj
+        
+        total_price = 0                             # Total price of cart
+        items = []                                  # Has Product item and total price of cart item
+        for item in cart_items:
+            temp = {}
+            temp['item'] = item
+            temp['total_price'] = item.product.price * item.quantity
+            total_price += item.product.price * item.quantity
+            items.append(temp)
         return render(request, 'store/cart.html', {
-            'cart_items': cart_items,
+            'cart_items': items,
             'user': user,
+            'total_price': total_price
         })
     else:
         messages.error(request, 'You do not have the permission to view that page!')
@@ -146,15 +164,12 @@ def add_to_cart(request):
         product_pk = request.POST.get('product_pk')
         product_quantity = request.POST.get('product_quantity')
         product_obj = Product.objects.get(pk=product_pk)
-        print('\n' + str(Product.objects.get(pk=product_pk)) + '\n')
 
         cart_obj = Cart.objects.get(member = request.user.pk)
-        user = request.user.pk
         cart_item = Cart_item.objects.create(cart=cart_obj, product=product_obj, quantity=product_quantity)
         cart_item.save()
 
-        response_data = {'something': product_pk}
-        return JsonResponse(response_data)
+        return redirect('product', product_id = product_pk)
     else:
         print("\nSOMETHING WENT WRONGE\n")
 
