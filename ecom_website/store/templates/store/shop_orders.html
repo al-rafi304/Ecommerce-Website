@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<div class="container">
+<div class="container mt-3">
     <table class="table">
         <thead>
             <tr>
@@ -14,7 +14,12 @@
         </thead>
         <tbody>
             {% for order in orders %}
-            <tr>
+            <tr class="
+            {% if order.order.order_status == order.order.CANCELLED %}table-danger
+            {% elif order.order.order_status == order.order.PENDING%}table-warning
+            {% elif order.order.order_status == order.order.PROCESSING%}table-primary
+            {% elif order.order.order_status == order.order.DELIVERED%}table-success
+            {% endif %}">
                 <td>{{ order.order.created_at}}</td>
                 <td>
                     {% for product in order.products %}
@@ -22,7 +27,18 @@
                     {% endfor %}
                 </td>
                 <td>{{ order.total }}$</td>
-                <td>{{ order.order.order_status }}</td>
+                <td>
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="order_id" value="{{order.order.pk}}">
+                        <select name="status">
+                            {% for choice in order.order.STATUS_CHOICES %}
+                                <option value="{{ choice.0 }}" {% if choice.0 == order.order.order_status %}selected{% endif %}>{{ choice.1 }}</option>
+                            {% endfor %}
+                        </select>
+                        <button class='btn btn-secondary' type="submit">Update</button>
+                    </form>
+                </td>
                 {% endfor %}
             </tr>
         </tbody>

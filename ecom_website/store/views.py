@@ -260,7 +260,7 @@ def checkout_success(request, session_id):
 
 
 def my_orders(request):
-    orders_obj = Order.objects.filter(member=request.user)      # SELECT * FROM Order WHERE member=request.user
+    orders_obj = Order.objects.filter(member=request.user).order_by('-created_at')      # SELECT * FROM Order WHERE member=request.user ORDER BY created_at DESC
 
     orders = []
 
@@ -293,7 +293,16 @@ def shop_orders(request, shop_id):
         raise Http404('Error page not found')
     
     shop = Shop.objects.get(id=shop_id)
-    orders_obj = Order.objects.filter(shop=shop)      # SELECT * FROM Order WHERE member=request.user
+    orders_obj = Order.objects.filter(shop=shop).order_by('-created_at')      # SELECT * FROM Order WHERE shop=shop ORDER BY created_at DESC
+
+    if request.method == "POST":
+        order_id = request.POST['order_id']
+        order_status = request.POST['status']
+        order_instance = Order.objects.get(id=order_id)
+        order_instance.order_status = order_status
+        order_instance.save()
+
+        return redirect('shop_orders', shop_id=shop_id)
 
     orders = []
 

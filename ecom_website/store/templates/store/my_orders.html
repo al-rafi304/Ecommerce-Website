@@ -2,8 +2,8 @@
 
 {% block content %}
 
-<div class="container">
-    <table class="table">
+<div class="container mt-3">
+    <table class="table table-hover">
         <thead>
             <tr>
                 <th>Date</th>
@@ -15,7 +15,12 @@
         </thead>
         <tbody>
             {% for order in orders %}
-            <tr>
+            <tr class="
+            {% if order.order.order_status == order.order.CANCELLED %}table-danger
+            {% elif order.order.order_status == order.order.PENDING%}table-warning
+            {% elif order.order.order_status == order.order.PROCESSING%}table-primary
+            {% elif order.order.order_status == order.order.DELIVERED%}table-success
+            {% endif %}">
                 <td>{{ order.order.created_at}}</td>
                 <td>{{ order.order.shop }}</td>
                 <td>
@@ -24,7 +29,7 @@
                     {% endfor %}
                 </td>
                 <td>{{ order.total }}$</td>
-                <td>{{ order.order.order_status }}</td>
+                <td>{{ order.order.get_order_status_display }}</td>         <!-- get_attributeName_display give the human readable name -->
                 {% endfor %}
             </tr>
         </tbody>
