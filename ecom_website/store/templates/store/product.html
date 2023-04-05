@@ -14,15 +14,22 @@
             </div>
 
             <div>
-                <h3>Price: {{ product.price }}TK</h3>
+                <p><small class="text-body-secondary">Sold {{ product.sold }} items</small></p>
+                <h3>Price: {{ product.price }}$</h3>
                 {% comment %} <div><a href='#' class='btn btn-primary'>Add to Cart</a></div> {% endcomment %}
                 {% if user.is_authenticated %}
-                <form method="POST" class="add-to-cart-form">
-                    {% csrf_token %}
-                    <input type="number" name="product_quantity" min="1" max="20 "step="1" value="1" style="width: 40px; height: auto">
-                    <input type="hidden" name="product_pk" value="{{ product.pk }}">
-                    <button type="submit" class="btn btn-primary">Add to Cart</button>
-                </form>
+                    {% if product.stock > 0 %}
+                        <form method="POST" class="add-to-cart-form">
+                            {% csrf_token %}
+                            <input type="number" name="product_quantity" min="1" max="{{ product.stock }}"step="1" value="1" style="width: 40px; height: auto">
+                            <input type="hidden" name="product_pk" value="{{ product.pk }}">
+                            <button type="submit" class="btn btn-primary">Add to Cart</button>
+                        </form>
+                    {% else %}
+                        <div class="alert alert-danger text-center" role="alert">
+                            Out of Stock
+                        </div>
+                    {% endif %}
                 {% endif %}
             </div>
         </div>

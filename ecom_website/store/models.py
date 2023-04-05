@@ -21,6 +21,7 @@ class Product(models.Model):
     description = models.TextField()
     price = models.DecimalField(max_digits = 8, decimal_places = 2)
     stock = models.IntegerField()
+    sold = models.IntegerField(default=0)
     image = models.ImageField(upload_to='images/')
 
     shop = models.ForeignKey(Shop, on_delete = models.CASCADE)

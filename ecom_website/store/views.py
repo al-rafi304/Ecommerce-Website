@@ -235,6 +235,12 @@ def checkout_success(request, session_id):
             instance.save()
             temp_amount += item.product.price
 
+            # Updating stock/sold
+            product_instance = Product.objects.get(id=item.product.id)      # SELECT * FROM Product WHERE id=product.id
+            product_instance.stock -= item.quantity
+            product_instance.sold += item.quantity
+            product_instance.save()
+
         trx_instance = Transaction(
             amount = temp_amount,
             order = order,
