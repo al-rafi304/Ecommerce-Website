@@ -119,14 +119,38 @@ def add_product(request, shop_id):
             form.save()
 
             messages.success(request, 'Product has been added to your shop!')
-            return render(request, 'store/home.html', {
-                'shop': my_shop,
-                'products': products
-            })
+            return redirect('manage_products', shop_id=shop_id)
             
     else:
         form = ProductForm()
-    return render(request, 'store/add_product.html', {'form': form})
+    return render(request, 'store/product_form.html', {
+        'form': form,
+        'button_txt': 'Add'
+        })
+
+def update_product(request, product_id):
+
+    product = Product.objects.get(id=product_id)
+    form = ProductForm(instance=product)
+
+    if request.user.shop.id != product.shop.id:
+        raise Http404("Page not found")
+
+    if request.method == 'POST':
+        form = ProductForm(request.POST, instance=product)
+        if form.is_valid():
+            form.save()
+
+            messages.success(request, 'Product has been updated!')
+            return redirect('manage_products', shop_id=product.shop.id)
+
+
+
+    return render(request, 'store/product_form.html', {
+        'form': form,
+        'button_txt': 'Update'
+        })
+
 
 def cart(request):
     if request.user.is_authenticated:
@@ -422,7 +446,27 @@ def download_order(request, shop_id):
 
     return response
 
+def manage_products(request, shop_id):
 
+    if not request.user.is_seller:
+        raise Http404("Page not found")
+    elif request.user.shop.id != shop_id:
+        raise Http404("Page not found")
+
+    shop = Shop.objects.get(id=shop_id)
+    products = Product.objects.filter(shop=shop)
+
+
+    # Deleting product
+    if request.method == 'POST':
+        product = Product.objects.get(id = request.POST['product_id'])
+        product.delete()
+        
+        return redirect('manage_products', shop_id=shop_id)
+
+    return render(request, 'store/manage_products.html', {
+        'products': products
+    })
 
 
 

@@ -58,9 +58,9 @@
     <h2>Products</h2>
     <div class="row">
         {% for product in Products %}
-        <div class="col-sm-6 col-md-4 col-lg-3 mb-3" style="max-height: auto; max-width:250px">
+        <div class="col-sm-6 col-md-4 col-lg-3 mb-3" style="height: 250px; width:250px">
             <div class="card h-100 bg-light text-dark border-0 shadow-sm">
-                <img src="{{ product.image.url }}" class="card-img-top img-fluid object-fit-cover" style="height: 70%; width: auto" alt="...">
+                <img src="{{ product.image.url }}" class="card-img-top img-fluid object-fit-cover" style="height: 150px; width: auto" alt="...">
                 <div class="card-body">
                     <h5 class="card-title"><a class="text-decoration-none" href="{% url 'product' product_id=product.pk%}">{{ product }}</h5></a>
                     <h6 class="float-end w-100">{{ product.price }}$</h6>
