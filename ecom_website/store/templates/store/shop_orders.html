@@ -3,6 +3,45 @@
 {% block content %}
 
 <div class="container mt-3">
+    <div class='d-flex row justify-content-evenly'>
+        <div class='d-flex col'>
+            <div class="card text-bg-primary mb-3" style="width: 300px">
+                <div class="card-header text-center"><h3>Total Orders</h3></div>
+                <div class="card-body">
+                <h4 class="card-title text-center">{{ order_count.total_count }}</h4>
+                {% comment %} <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> {% endcomment %}
+                </div>
+            </div>
+        </div>
+        <div class='d-flex col'>
+            <div class="card text-bg-success mb-3" style="width: 300px">
+                <div class="card-header text-center"><h3>Delivered</h3></div>
+                <div class="card-body">
+                <h4 class="card-title text-center">{{ order_count.delivered_count }}</h4>
+                {% comment %} <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> {% endcomment %}
+                </div>
+            </div>
+        </div>
+        <div class='d-flex col'>
+            <div class="card text-bg-warning mb-3" style="width: 300px">
+                <div class="card-header text-center"><h3>Pending</h3></div>
+                <div class="card-body">
+                <h4 class="card-title text-center">{{ order_count.pending_count }}</h4>
+                {% comment %} <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> {% endcomment %}
+                </div>
+            </div>
+        </div>
+        <div class='d-flex col'>
+            <div class="card text-bg-danger mb-3" style="width: 300px">
+                <div class="card-header text-center"><h3>Cancelled</h3></div>
+                <div class="card-body">
+                <h4 class="card-title text-center">{{ order_count.cancelled_count }}</h4>
+                {% comment %} <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> {% endcomment %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <table class="table table-hover">
         <thead>
             <tr>

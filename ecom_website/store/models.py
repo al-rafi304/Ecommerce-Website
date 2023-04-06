@@ -57,12 +57,10 @@ class Cart_item(models.Model):
 
 class Order(models.Model):
     PENDING = 'PD'
-    PROCESSING = 'PR'
     DELIVERED = 'DL'
     CANCELLED = 'CL'
     STATUS_CHOICES = [
         (PENDING, 'Pending'),
-        (PROCESSING, 'Processing'),
         (DELIVERED, 'Delivered'),
         (CANCELLED, 'Cancelled'),
     ]

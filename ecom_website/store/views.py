@@ -322,6 +322,13 @@ def shop_orders(request, shop_id):
         return redirect('shop_orders', shop_id=shop_id)
 
     orders = []
+    order_count = {
+        'total_count': 0,
+        'delivered_count': 0,
+        'pending_count': 0,
+        'cancelled_count': 0,
+    }
+    
 
     for order in orders_obj:
         order_dict = {}
@@ -339,9 +346,18 @@ def shop_orders(request, shop_id):
 
         orders.append(order_dict)
 
+        order_count['total_count'] += 1
+        if order.order_status == order.DELIVERED:
+            order_count['delivered_count'] += 1
+        if order.order_status == order.PENDING:
+            order_count['pending_count'] += 1
+        if order.order_status == order.CANCELLED:
+            order_count['cancelled_count'] += 1
+
 
     return render(request, 'store/shop_orders.html', {
-        'orders': orders
+        'orders': orders,
+        'order_count': order_count
     })
 
 def download_order(request, shop_id):
