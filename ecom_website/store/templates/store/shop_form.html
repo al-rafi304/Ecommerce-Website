@@ -6,11 +6,11 @@
             <div class="col-md-6">
                 <div class="card bg-light text-dark rounded shadow p-3 mb-5 bg-body-tertiary rounded border-0">
                     <div class="card-body">
-                        <h1 class="card-title">Create Shop</h1>
+                        <h1 class="card-title">{{ purpose }} Shop</h1>
                         <form method="POST" enctype="multipart/form-data">
                             {% csrf_token %}
                             {{ form.as_p }}
-                            <button type="submit" class="btn btn-primary">Create</button>
+                            <button type="submit" class="btn btn-primary">{{ purpose }}</button>
                         </form>
                     </div>
                 </div>

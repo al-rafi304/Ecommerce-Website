@@ -83,12 +83,15 @@ def create_shop(request):
             
             except stripe.error.StripeError as e:
                 messages.error(request, str(e))
-                return render(request, 'create_shop.html')
+                return render(request, 'store/shop_form.html')
 
 
     else:
         form = ShopForm()
-    return render(request, 'store/create_shop.html', {'form': form})
+    return render(request, 'store/shop_form.html', {
+        'form': form,
+        'purpose': 'Create'
+        })
 
 def shop(request, shop_id):
     my_shop = Shop.objects.get(pk = shop_id)
@@ -489,7 +492,23 @@ def all_shops(request):
     shops = Shop.objects.all()
     return render(request, 'store/all_shops.html', {'shops': shops})
 
+def update_shop(request):
 
+    shop = Shop.objects.get(id=request.user.shop.id)
+    form = ShopForm(instance=shop)
+
+
+    if request.method == "POST":
+        form = ShopForm(request.POST, request.FILES, instance=shop)
+        if form.is_valid():
+            form.save()
+
+            return redirect('shop', shop_id=request.user.shop.id)
+
+    return render(request, 'store/shop_form.html', {
+        'form': form,
+        'purpose': 'Update'
+    })
 
 
 

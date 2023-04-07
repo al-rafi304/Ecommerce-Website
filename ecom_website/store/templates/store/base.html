@@ -61,7 +61,7 @@
                             <li><a class="dropdown-item" href="{% url 'add_product' shop_id=user.shop.pk %}">Add Product</a></li>
                             <li><a class="dropdown-item" href="{% url 'manage_products' shop_id=user.shop.pk %}">Manage Products</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#">Preference</a></li>
+                            <li><a class="dropdown-item" href="{% url 'update_shop' %}">Edit Shop</a></li>
                         </ul>
                     </li>
 
