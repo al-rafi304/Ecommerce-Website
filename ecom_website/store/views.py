@@ -18,8 +18,8 @@ stripe.api_key = STRIPE_SECRET_KEY
 # Create your views here.
 
 def home(request):
-    products = Product.objects.all()
-    shops = Shop.objects.all()
+    products = Product.objects.all()                                                        # SELECT * FROM Product
+    shops = Shop.objects.all()                                                              # SELECT * FROM Shop
     display_shops = Shop.objects.exclude(Q(banner_img='') | Q(banner_img__isnull=True))     # SELECT * FROM Shop WHERE banner_img IS NOT NULL OR banner_img!='';
     print(f'\n\n{display_shops}\n\n')
 
@@ -58,7 +58,7 @@ def create_shop(request):
         if form.is_valid():
             shop = form.save(commit=False)  # Creating shop instance without saving in database
             shop.owner = request.user       # Adding foreign key
-            form.save()                     # Saving in database
+            form.save()                     # Saving in database                                        INSERT INTO Shop VALUES (form.data)
 
             request.user.is_seller = True
             request.user.save()
@@ -76,7 +76,7 @@ def create_shop(request):
 
                 # Store the account ID in the database
                 shop.stripe_account_id = account.id
-                shop.save()
+                shop.save()                                                                             # INSERT INTO Shop SHOP (stripe_account_id) VALUES (account.id)
 
                 messages.success(request, 'Congratulations! You created you own shop!')
                 return redirect('home')
@@ -94,15 +94,15 @@ def create_shop(request):
         })
 
 def shop(request, shop_id):
-    my_shop = Shop.objects.get(pk = shop_id)
-    products = my_shop.product_set.all()
+    my_shop = Shop.objects.get(pk = shop_id)            # SELECT * FROM Shop WHERE id=shop_id
+    products = my_shop.product_set.all()                # SELECT * FROM Product WHERE shop=my_shop
     return render(request, 'store/shop.html', {
         'shop': my_shop,
         'products': products
         })
 
 def product(request, product_id):
-    product = Product.objects.get(pk = product_id)
+    product = Product.objects.get(pk = product_id)                          # SELECT * FROM Product WHERE id=product_id
     return render(request, 'store/product.html', {'product': product})
 
 def add_product(request, shop_id):
@@ -112,14 +112,14 @@ def add_product(request, shop_id):
         return redirect('home')
 
 
-    my_shop = Shop.objects.get(pk = shop_id)
-    products = my_shop.product_set.all()
+    my_shop = Shop.objects.get(pk = shop_id)                                        # SELECT * FROM Shop WHERE id=shop_id
+    products = my_shop.product_set.all()                                            # SELECT * FROM Product WHERE shop=shop_id
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
             product = form.save(commit=False)
             product.shop = my_shop
-            form.save()
+            form.save()                                                             # INSERT INTO Product VALUES (form.data)
 
             messages.success(request, 'Product has been added to your shop!')
             return redirect('manage_products', shop_id=shop_id)
@@ -133,7 +133,7 @@ def add_product(request, shop_id):
 
 def update_product(request, product_id):
 
-    product = Product.objects.get(id=product_id)
+    product = Product.objects.get(id=product_id)                                # SELECT * FROM Product WHERE id=product_id
     form = ProductForm(instance=product)
 
     if request.user.shop.id != product.shop.id:
@@ -142,7 +142,7 @@ def update_product(request, product_id):
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES, instance=product)
         if form.is_valid():
-            form.save()
+            form.save()                                                         # UPDATE Product SET title=form.title, shop=form.shop... WHERE id=product_id
 
             messages.success(request, 'Product has been updated!')
             return redirect('manage_products', shop_id=product.shop.id)
@@ -154,19 +154,18 @@ def update_product(request, product_id):
         'button_txt': 'Update'
         })
 
-
 def cart(request):
     if request.user.is_authenticated:
 
         if request.method == "POST":
             item_id = request.POST['item_id']
             print(item_id)
-            Cart_item.objects.get(id=item_id).delete()
+            Cart_item.objects.get(id=item_id).delete()              # DELETE FROM Cart_item WHERE id=item_id
             return redirect('cart')
 
 
         user = request.user
-        cart_obj = Cart.objects.get(member=user)
+        cart_obj = Cart.objects.get(member=user)                    # SELECT * FROM Cart WHERE member=user
         cart_items = Cart_item.objects.filter(cart=cart_obj)        # SELECT * FROM Cart_item WHERE cart=cart_obj
         
         total_price = 0                             # Total price of cart
@@ -193,8 +192,8 @@ def add_to_cart(request):
         product_quantity = request.POST.get('product_quantity')
         product_obj = Product.objects.get(pk=product_pk)
 
-        cart_obj = Cart.objects.get(member = request.user.pk)
-        cart_item = Cart_item.objects.create(cart=cart_obj, product=product_obj, quantity=product_quantity)
+        cart_obj = Cart.objects.get(member = request.user.pk)                                                       # SELECT * FROM Cart WHERE member=request.user.pk
+        cart_item = Cart_item.objects.create(cart=cart_obj, product=product_obj, quantity=product_quantity)         # INSERT INTO Cart_item (cart, product, quantity) VALUES (cart_obj, product_obj, product_quantity)
         cart_item.save()
 
         return redirect('product', product_id = product_pk)
@@ -204,7 +203,7 @@ def add_to_cart(request):
 def checkout(request):
     user = request.user
     cart = user.cart
-    cart_items = Cart_item.objects.filter(cart=cart)
+    cart_items = Cart_item.objects.filter(cart=cart)                    # SELECT * FROM Cart_item WHERE cart=cart
     checkout_items = {}
     total_price = 0
 
@@ -250,10 +249,10 @@ def checkout_success(request, session_id):
     total = session.amount_total
     transaction_id = session.payment_intent
     cart = request.user.cart
-    cart_items = Cart_item.objects.filter(cart=cart)       # SELECT * FROM Cart_item WHERE cart=user.cart.id
+    cart_items = Cart_item.objects.filter(cart=cart)                            # SELECT * FROM Cart_item WHERE cart=user.cart.id
 
     # Making sure records are not added twice
-    if Transaction.objects.filter(stripe_trx_id=transaction_id).exists():
+    if Transaction.objects.filter(stripe_trx_id=transaction_id).exists():       # SELECT * FROM Transaction WHERE stripe_trx_id = transaction_id
         raise Http404('Error page not found')
 
     # Getting all items which were checked out
@@ -266,8 +265,8 @@ def checkout_success(request, session_id):
 
     # Saving Order, Order_item, Transaction for each shop
     for shop, items in checkout_items.items():
-        order = Order(member=request.user, shop=shop)
-        order.save()
+        order = Order(member=request.user, shop=shop)                       
+        order.save()                                                            # INSERT INTO Order (member, shop) VALUES (request.user, shop)
         temp_amount = 0
         for item in items:
             instance = Order_item(
@@ -275,14 +274,14 @@ def checkout_success(request, session_id):
                   order=order,
                     quantity=item.quantity
             )
-            instance.save()
+            instance.save()                                                     # INSERT INTO Order_item (product, order, quantity) VALUES (item,product, order, item.quantity)
             temp_amount += item.product.price
 
             # Updating stock/sold
-            product_instance = Product.objects.get(id=item.product.id)      # SELECT * FROM Product WHERE id=product.id
+            product_instance = Product.objects.get(id=item.product.id)          # SELECT * FROM Product WHERE id=product.id
             product_instance.stock -= item.quantity
             product_instance.sold += item.quantity
-            product_instance.save()
+            product_instance.save()                                             # UPDATE Product SET stock = stock-item.quantity, sold = sold+item.quantity WHERE id=item.product.id
 
         trx_instance = Transaction(
             amount = temp_amount,
@@ -290,17 +289,16 @@ def checkout_success(request, session_id):
             member = request.user,
             stripe_trx_id = transaction_id
         )
-        trx_instance.save()
+        trx_instance.save()                                                     # INSERT INTO Transaction (amount, order, member, stripe_trx_id) VALUES (temp_amount, order, request.user, transaction_id)
     
     # Emptying cart
     for item in cart_items:
-        item.delete()
+        item.delete()                                                           # DELECT FROM Cart_item WHERE cart=request.user.cart
 
     return render(request, 'store/checkout_success.html', {
         'trx': transaction_id,
         'total': total/100
     })
-
 
 def my_orders(request):
     orders_obj = Order.objects.filter(member=request.user).order_by('-created_at')      # SELECT * FROM Order WHERE member=request.user ORDER BY created_at DESC
@@ -311,10 +309,10 @@ def my_orders(request):
         order_dict = {}
         order_dict['order'] = order
         order_dict['total'] = 0
-        order_dict['trx'] = Transaction.objects.get(order=order)
+        order_dict['trx'] = Transaction.objects.get(order=order)                        # SELECT * FROM Transaction WHERE order=order      
         order_dict['products'] = []
 
-        for order_item in Order_item.objects.filter(order=order):   #SELECT * FROM Order_item WHERE order=order
+        for order_item in Order_item.objects.filter(order=order):                       # SELECT * FROM Order_item WHERE order=order
             title = order_item.product.title
             price = order_item.product.price
             quantity = order_item.quantity
@@ -336,15 +334,15 @@ def shop_orders(request, shop_id):
     if not request.user.is_seller or not request.user.shop.id == shop_id:
         raise Http404('Error page not found')
     
-    shop = Shop.objects.get(id=shop_id)
-    orders_obj = Order.objects.filter(shop=shop).order_by('-created_at')      # SELECT * FROM Order WHERE shop=shop ORDER BY created_at DESC
+    shop = Shop.objects.get(id=shop_id)                                         # SELECT * FROM Shop WHERE id=shop_id
+    orders_obj = Order.objects.filter(shop=shop).order_by('-created_at')        # SELECT * FROM Order WHERE shop=shop ORDER BY created_at DESC
 
     if request.method == "POST":
         order_id = request.POST['order_id']
         order_status = request.POST['status']
-        order_instance = Order.objects.get(id=order_id)
+        order_instance = Order.objects.get(id=order_id)                         # SELECT * FROM Order WHERE id=order_id
         order_instance.order_status = order_status
-        order_instance.save()
+        order_instance.save()                                                   # INSERT INTO Order SET order_status=order_status WHERE id=order_id
 
         return redirect('shop_orders', shop_id=shop_id)
 
@@ -395,9 +393,9 @@ def download_order(request, shop_id):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename=orders.csv'
 
-    shop = Shop.objects.get(id=shop_id)
+    shop = Shop.objects.get(id=shop_id)                                     # SELECT * FROM Shop WHERE id=shop_id
     orders = []
-    orders_inst = Order.objects.filter(shop=shop)
+    orders_inst = Order.objects.filter(shop=shop)                           # SELECT * FROM Order WHERE shop=shop
 
     for order in orders_inst:
         member = order.member
@@ -407,7 +405,7 @@ def download_order(request, shop_id):
         temp['user'] = member
         temp['items'] = []
         temp['total'] = 0
-        for item in Order_item.objects.filter(order=order):
+        for item in Order_item.objects.filter(order=order):                 # SELECT * FROM Orde_item WHERE order=order
             temp['items'].append({
                 'product': item.product.title,
                 'quantity': item.quantity
@@ -456,14 +454,14 @@ def manage_products(request, shop_id):
     elif request.user.shop.id != shop_id:
         raise Http404("Page not found")
 
-    shop = Shop.objects.get(id=shop_id)
-    products = Product.objects.filter(shop=shop)
+    shop = Shop.objects.get(id=shop_id)                                         # SELECT * FROM Shop WHERE id=shop_id
+    products = Product.objects.filter(shop=shop)                                # SELECT * FROM Product WHERE shop=shop
 
 
     # Deleting product
     if request.method == 'POST':
-        product = Product.objects.get(id = request.POST['product_id'])
-        product.delete()
+        product = Product.objects.get(id = request.POST['product_id'])          
+        product.delete()                                                        # DELETE FROM Product WHERE id=request.POST['product_id']
         
         return redirect('manage_products', shop_id=shop_id)
 
@@ -477,10 +475,10 @@ def all_products(request):
     query = request.GET.get('search')
 
     if  query != None:
-        products = Product.objects.filter(title__contains=query)
+        products = Product.objects.filter(title__contains=query)        # SELECT * FROM Product WHERE title LIKE %query%
         searched = True
     else:
-        products = Product.objects.all()
+        products = Product.objects.all()                                # SELECT * FROM Product
     
     return render(request, 'store/all_products.html', {
         'products': products,
@@ -489,7 +487,7 @@ def all_products(request):
     })
 
 def all_shops(request):
-    shops = Shop.objects.all()
+    shops = Shop.objects.all()                                              # SELECT * FROM Shop
     return render(request, 'store/all_shops.html', {'shops': shops})
 
 def update_shop(request):
@@ -501,7 +499,7 @@ def update_shop(request):
     if request.method == "POST":
         form = ShopForm(request.POST, request.FILES, instance=shop)
         if form.is_valid():
-            form.save()
+            form.save()                                                     # UPDATE Shop SET title=form.title, description=form.description... WHERE id=request.user.shop.id
 
             return redirect('shop', shop_id=request.user.shop.id)
 
@@ -509,19 +507,6 @@ def update_shop(request):
         'form': form,
         'purpose': 'Update'
     })
-
-
-
-def test(request):
-    # session = stripe.checkout.Session.retrieve('sdfsdfsdf')
-    # print('sesion: ', session)
-    transaction_id = 'asdlfhjawodif'
-    total = 2197
-    return render(request, 'store/checkout_success.html', {
-        'trx': transaction_id,
-        'total': total/100
-    })
-
 
 
     

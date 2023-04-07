@@ -35,12 +35,12 @@ def register_member(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            form.save()                                                                             # INSERT INTO Member VALUES (form.data)
             username = form.cleaned_data['username']
             password = form.cleaned_data['password1']
             user = authenticate(username=username, password=password)
             login(request, user)
-            cart_obj = Cart.objects.create(member=user)
+            cart_obj = Cart.objects.create(member=user)                                             # INSERT INTO Cart (member) VALUES (user)
             messages.success(request, f'You are now logged in as {request.user.username}')
             return redirect('home')
         else:
@@ -59,7 +59,7 @@ def update_profile(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
-            form.save()
+            form.save()                                                                             # UPDATE Member SET VALUES (form.data)
             username = form.cleaned_data['username']
             password = form.cleaned_data['password1']
             user = authenticate(username=username, password=password)
