@@ -63,7 +63,7 @@
                 <img src="{{ product.image.url }}" class="card-img-top img-fluid object-fit-cover" style="height: 150px; width: auto" alt="...">
                 <div class="card-body">
                     <h5 class="card-title"><a class="text-decoration-none" href="{% url 'product' product_id=product.pk%}">{{ product }}</h5></a>
-                    <h6 class="float-end w-100">{{ product.price }}$</h6>
+                    <h6 class="float-end w-100">${{ product.price }}</h6>
                 </div>
             </div>
         </div>

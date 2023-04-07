@@ -4,7 +4,7 @@ from .models import Shop, Product
 class ShopForm(forms.ModelForm):
     class Meta:
         model = Shop
-        fields = ('title', 'description', 'profile_img', 'banner_img')
+        fields = ('title', 'description', 'phone', 'email', 'social_page', 'profile_img', 'banner_img')
 
         labels = {
             'title': 'Shop Name',
@@ -20,6 +20,9 @@ class ShopForm(forms.ModelForm):
 
         self.fields['title'].widget.attrs['class'] = class_attr
         self.fields['description'].widget.attrs['class'] = class_attr
+        self.fields['phone'].widget.attrs['class'] = class_attr
+        self.fields['email'].widget.attrs['class'] = class_attr
+        self.fields['social_page'].widget.attrs['class'] = class_attr
         self.fields['profile_img'].widget.attrs['class'] = class_attr
         self.fields['banner_img'].widget.attrs['class'] = class_attr
 

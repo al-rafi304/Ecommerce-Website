@@ -7,11 +7,25 @@ from member.models import Member
 class Shop(models.Model):
     title = models.CharField(max_length = 255)
     description = models.TextField()
+    phone = models.IntegerField()
+    email = models.EmailField()
+    social_page = models.CharField(max_length=255, null=True, blank=True)
+
     stripe_account_id = models.CharField(max_length = 255)
     banner_img = models.ImageField(upload_to='images/', null=True, blank=True)
     profile_img = models.ImageField(upload_to='images/')
 
     owner = models.OneToOneField(Member, on_delete = models.CASCADE)
+
+    @property
+    def social_page_domain(self):
+        url = self.social_page
+        if url != '' and url != None:
+            start = url.find("www.") + 4
+            end = url.find(".com")
+            domain = url[start:end]
+            return domain.capitalize()
+        return url
 
     def __str__(self) -> str:
         return self.title

@@ -15,7 +15,7 @@
 
             <div>
                 <p><small class="text-body-secondary">Sold {{ product.sold }} items</small></p>
-                <h3>Price: {{ product.price }}$</h3>
+                <h3>Price: ${{ product.price }}</h3>
                 {% if user.is_authenticated %}
                     {% if product.stock > 0 %}
                         <form method="POST" class="add-to-cart-form" action="{% url 'add_to_cart' %}">
