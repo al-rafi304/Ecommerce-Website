@@ -9,7 +9,7 @@
         <div class=' d-flex flex-column mb-3 px-4 justify-content-between'>
             <div>
                 <h2>{{ product.title }}</h2>
-                <h5>About</h5>
+                <h6><a class="text-decoration-none" href="{% url 'shop' shop_id=product.shop.id %}">From {{ product.shop }}</a></h6>
                 <p>{{ product.description }}</p>
             </div>
 
