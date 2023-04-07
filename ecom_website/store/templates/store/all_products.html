@@ -26,15 +26,6 @@
                                         {% comment %} <p class='text-body-secondary m-0'>Sold: {{ item.sold }}</p> {% endcomment %}
                                         <h6>Price: ${{ item.price }}</h6>
                                     </div>
-                                    <div class="col-lg-2 d-flex align-items-center justify-content-end">
-                                        <a href="{% url 'update_product' product_id=item.id %}" type="button" class="btn btn-primary btn-sm" aria-label="Close">Edit</a>
-                                        <div class='p-1'></div>
-                                        <form method='POST' class='d-flex'>
-                                            {% csrf_token %}
-                                            <input type='hidden' name='product_id' value='{{ item.id }}'>
-                                            <button type="submit" class="btn btn-sm btn-danger" name='remove' aria-label="Close">Delete</button>
-                                    </div>
-
                                 </div>
                             </li>
                         {% endfor %}
