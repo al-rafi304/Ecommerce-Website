@@ -47,4 +47,27 @@ def register_member(request):
             print(form.error_messages)
     else:
         form = RegisterForm()
-    return render(request, 'member/register.html', {'form': form})
+    return render(request, 'member/register.html', {
+        'form': form,
+        'info': 'Register'
+        })
+
+def update_profile(request):
+    
+    form = RegisterForm(instance = request.user)
+
+    if request.method == 'POST':
+        form = RegisterForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password1']
+            user = authenticate(username=username, password=password)
+            login(request, user)
+
+            return redirect('home')
+    
+    return render(request, 'member/register.html', {
+        'form': form,
+        'info': 'Update'
+    })
