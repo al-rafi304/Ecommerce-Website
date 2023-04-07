@@ -140,7 +140,7 @@ def update_product(request, product_id):
         raise Http404("Page not found")
 
     if request.method == 'POST':
-        form = ProductForm(request.POST, instance=product)
+        form = ProductForm(request.POST, request.FILES, instance=product)
         if form.is_valid():
             form.save()
 
