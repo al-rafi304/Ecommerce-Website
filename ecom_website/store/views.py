@@ -468,8 +468,26 @@ def manage_products(request, shop_id):
         'products': products
     })
 
+def all_products(request):
 
+    searched = False
+    query = request.GET.get('search')
 
+    if  query != None:
+        products = Product.objects.filter(title__contains=query)
+        searched = True
+    else:
+        products = Product.objects.all()
+    
+    return render(request, 'store/all_products.html', {
+        'products': products,
+        'searched': searched,
+        'search_query': query
+    })
+
+def all_shops(request):
+    shops = Shop.objects.all()
+    return render(request, 'store/all_shops.html', {'shops': shops})
 
 
 

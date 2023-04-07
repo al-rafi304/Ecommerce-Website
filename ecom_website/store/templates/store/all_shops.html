@@ -1,0 +1,22 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+    
+<div class='container'>
+    <h1>All Shops</h1>
+    <div class="row">
+        {% for shop in shops %}
+        <div class="col-sm-6 col-md-4 col-lg-3 mb-3" style="height: 400px; max-width:250px">
+            <div class="card h-100 bg-light text-dark border-0 shadow-sm">
+                <img src="{{ shop.profile_img.url }}" class="card-img-top img-fluid object-fit-cover" style="height: 80%; width: auto" alt="...">
+                <div class="card-body">
+                    <h5 align="center" class="card-title"><a class="text-decoration-none" href="{% url 'shop' shop_id=shop.pk %}"><i class="bi bi-shop"></i> {{ shop.title }}</h5></a>
+                    {% comment %} <p class="card-text">{{ shop.description | truncatewords:10}}</p> {% endcomment %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock content %}
