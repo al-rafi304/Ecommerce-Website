@@ -35,7 +35,7 @@ def home(request):
     return render(
         request, 'store/home.html',
         {
-            'Products': product_list,
+            'Products': product_list[:9],
             'shops': shops_list[:4],
             'display_shops': display_shop_list,
             'request': request,
