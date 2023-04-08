@@ -17,18 +17,25 @@
                 <p><small class="text-body-secondary">Sold {{ product.sold }} items</small></p>
                 <h3>Price: ${{ product.price }}</h3>
                 {% if user.is_authenticated %}
-                    {% if product.stock > 0 %}
-                        <form method="POST" class="add-to-cart-form" action="{% url 'add_to_cart' %}">
-                            {% csrf_token %}
-                            <input type="number" name="product_quantity" min="1" max="{{ product.stock }}"step="1" value="1" style="width: 40px; height: auto">
-                            <input type="hidden" name="product_pk" value="{{ product.pk }}">
-                            <button type="submit" class="btn btn-primary">Add to Cart</button>
-                        </form>
+                    {% if not in_cart %}
+                        {% if product.stock > 0 %}
+                            <form method="POST" class="add-to-cart-form" action="{% url 'add_to_cart' %}">
+                                {% csrf_token %}
+                                <input type="number" name="product_quantity" min="1" max="{{ product.stock }}"step="1" value="1" style="width: 40px; height: auto">
+                                <input type="hidden" name="product_pk" value="{{ product.pk }}">
+                                <button type="submit" class="btn btn-primary">Add to Cart</button>
+                            </form>
+                        {% else %}
+                            <div class="alert alert-danger text-center" role="alert">
+                                Out of Stock
+                            </div>
+                        {% endif %}
                     {% else %}
-                        <div class="alert alert-danger text-center" role="alert">
-                            Out of Stock
+                        <div class="alert alert-success text-center" role="alert">
+                            Item added to cart
                         </div>
                     {% endif %}
+
                 {% endif %}
             </div>
         </div>

@@ -103,7 +103,18 @@ def shop(request, shop_id):
 
 def product(request, product_id):
     product = Product.objects.get(pk = product_id)                          # SELECT * FROM Product WHERE id=product_id
-    return render(request, 'store/product.html', {'product': product})
+    cart_items = Cart_item.objects.filter(cart=request.user.cart)           # SELECT * FROM Cart_item WHERE cart=request.user.cart
+    in_cart = False
+    for item in cart_items:
+        if item.product == product:
+            in_cart = True
+            break
+
+    print(in_cart)
+    return render(request, 'store/product.html', {
+        'product': product,
+        'in_cart': in_cart
+        })
 
 def add_product(request, shop_id):
 

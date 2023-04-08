@@ -20,5 +20,4 @@ urlpatterns = [
     path('orders/', views.my_orders, name = 'my_orders'),
     path('orders/<int:shop_id>/download', views.download_order, name = 'download_orders'),
 
-    path('test', views.test, name = 'test'),
 ]

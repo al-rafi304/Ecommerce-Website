@@ -29,7 +29,7 @@
                                     <div class="col">
                                         <h5><a class='text-decoration-none' href="{% url 'product' product_id=item.item.product.pk %}">{{ item.item.product.title }}</a></h5>
                                         <p class='text-body-secondary'>
-                                            From <a href="#" class="text-decoration-none">{{ item.item.product.shop }}</a>
+                                            From <a href="{% url 'shop' shop_id=item.item.product.shop.id %}" class="text-decoration-none">{{ item.item.product.shop }}</a>
                                         </p>
                                         <p class='text-body-secondary m-0'>Quantity: {{ item.item.quantity }}</p>
                                         <h6>Price: {{ item.total_price }}$</h6>
