@@ -103,14 +103,17 @@ def shop(request, shop_id):
 
 def product(request, product_id):
     product = Product.objects.get(pk = product_id)                          # SELECT * FROM Product WHERE id=product_id
-    cart_items = Cart_item.objects.filter(cart=request.user.cart)           # SELECT * FROM Cart_item WHERE cart=request.user.cart
     in_cart = False
-    for item in cart_items:
-        if item.product == product:
-            in_cart = True
-            break
+    if request.user.is_authenticated:
+        cart_items = Cart_item.objects.filter(cart=request.user.cart)           # SELECT * FROM Cart_item WHERE cart=request.user.cart
+        for item in cart_items:
+            if item.product == product:
+                in_cart = True
+                break
 
-    print(in_cart)
+        print(in_cart)
+    else:
+        cart_items = []
     return render(request, 'store/product.html', {
         'product': product,
         'in_cart': in_cart
@@ -412,6 +415,7 @@ def download_order(request, shop_id):
         member = order.member
         member.first_name
         temp = {}
+        temp['trx'] = Transaction.objects.get(order=order)
         temp['order'] = order
         temp['user'] = member
         temp['items'] = []
@@ -432,6 +436,7 @@ def download_order(request, shop_id):
     # Writing Headers
     writer.writerow([
         'Order ID',
+        'Trx ID',
         'Placed At',
         'Order From',
         'Shipping Address',
@@ -446,6 +451,7 @@ def download_order(request, shop_id):
     for order in orders:
         writer.writerow([
             order['order'].id,
+            order['trx'].stripe_trx_id,
             order['order'].created_at,
             f"{order['user'].first_name} {order['user'].last_name}",
             order['user'].address,
