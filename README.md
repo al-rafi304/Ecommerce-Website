@@ -1,6 +1,6 @@
 # Django E-Commerce Website
 
-![Gif](https://imgur.com/80Vdf5i)
+![Gif](https://github.com/al-rafi304/Ecommerce-Website/blob/main/E-Commers_Website.gif)
 
 This is an E-commerce project for my university's database course where users can shop and sell products. A very basic shopping system has been implemented in a very short time period so expect some bugs.
 
